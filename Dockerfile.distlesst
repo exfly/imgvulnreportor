@@ -1,0 +1,30 @@
+# docker build -f Dockerfile.distlesst -t vulnscan:dev-distless .
+FROM python:3.9-slim AS builder
+# RUN sed -E -i 's/(deb|security).debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pipenv
+
+# -- Install Application into container:
+RUN set -ex && mkdir /app
+
+WORKDIR /app
+
+# -- Adding Pipfiles
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
+
+# -- Install dependencies:
+RUN set -ex && pipenv install --deploy --system
+
+RUN pip3 uninstall --yes pipenv pip
+
+# docker run --rm -it --entrypoint=sh vulnscan:dev-distless
+FROM gcr.io/distroless/python3-debian11:debug
+
+COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/dist-packages
+
+WORKDIR /app
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+COPY . /app
+
+ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages

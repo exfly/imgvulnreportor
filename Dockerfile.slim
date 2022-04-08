@@ -1,0 +1,23 @@
+# docker build -f Dockerfile.slim -t vulnscan:dev-slim .
+FROM python:3.9-slim AS base
+FROM base AS builder
+
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pipenv
+
+WORKDIR /app
+COPY Pipfile Pipfile.lock /app/
+RUN bash -c 'PIPENV_VENV_IN_PROJECT=1 pipenv install'
+
+FROM base
+WORKDIR /app
+COPY --from=builder /app /app/
+COPY . /app/
+
+# Change this to call your app
+CMD [".venv/bin/python", "main.py"]
+
+# docker run --rm -it --entrypoint=sh vulnscan:dev
+# /usr/local/lib/python3.9/dist-packages/
