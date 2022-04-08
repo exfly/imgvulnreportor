@@ -8,6 +8,8 @@ logger = logging.getLogger('r')
 logger.setLevel(logging.DEBUG)
 
 vulnfiles = [
+    {'type': 'image', 'val': 'bitnami/minideb:stretch', 'report': 'bitnami-minideb:stretch'},
+    {'type': 'image', 'val': 'debian:buster-slim'},
     {'type': 'image', 'val': 'alpine:3'},
     {'type': 'image', 'val': 'ubuntu:20.04'},
     {'type': 'image', 'val': 'alpine:edge'},
@@ -23,7 +25,7 @@ vulnfiles = [
         'report': 'distroless-java11'},
     {'type': 'image', 'val': 'gcr.io/distroless/cc-debian11',
         'report': 'distroless-cc'},
-    {'type': 'image', 'val': 'gcr.io/gcr.io/distroless/nodejs-debian11',
+    {'type': 'image', 'val': 'gcr.io/distroless/nodejs-debian11',
         'report': 'distroless-nodejs'},
     {'type': 'image', 'val': 'gcr.io/distroless/python3-debian11',
         'report': 'distroless-python3'},
